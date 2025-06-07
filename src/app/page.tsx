@@ -16,6 +16,8 @@ export default function Page() {
   const [shiftLog, setShiftLog] = useState<{ start?: string; end?: string }>({})
   const [shiftActive, setShiftActive] = useState<boolean>(false)
 
+  const [showCalendar, setShowCalendar] = useState<boolean>(false)
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
@@ -235,7 +237,17 @@ export default function Page() {
         <button onClick={handleEndShift} className={buttonClass}>
           End Shift
         </button>
+        <button onClick={() => setShowCalendar(!showCalendar)} className={buttonClass}>
+          {showCalendar ? 'Hide Calendar' : 'Show Calendar'}
+        </button>
       </div>
+
+      {showCalendar && (
+        <div className="mt-4 text-gray-700 text-sm">
+          <p>Calendar view will go here.</p>
+          {/* This block is real and toggleable. You can place a future calendar component here. */}
+        </div>
+      )}
 
       {(shiftLog.start || shiftLog.end) && (
         <div className="text-sm text-gray-600 mt-4">
