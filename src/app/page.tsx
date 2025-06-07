@@ -1,30 +1,34 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { Session } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabaseClient'
 
+type ShiftLog = {
+  start: string
+  end: string
+  range: string
+}
+
 export default function Page() {
-  const [session, setSession] = useState<any>(null)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [isLogin, setIsLogin] = useState(true)
+  const [session, setSession] = useState<Session | null>(null)
+  const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const [isLogin, setIsLogin] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-
+  const [loading, setLoading] = useState<boolean>(false)
   const [clock, setClock] = useState<string>('')
-
-  const [shiftLog, setShiftLog] = useState<{ start?: string; end?: string }>({})
+  const [shiftLog, setShiftLog] = useState<Partial<ShiftLog>>({})
   const [shiftActive, setShiftActive] = useState<boolean>(false)
-
   const [showCalendar, setShowCalendar] = useState<boolean>(false)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session)
     })
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession)
     })
 
     return () => {
@@ -40,7 +44,7 @@ export default function Page() {
     return () => clearInterval(interval)
   }, [])
 
-  const refreshShiftStatus = async () => {
+  const refreshShiftStatus = async (): Promise<void> => {
     const { data: user } = await supabase.auth.getUser()
     if (!user?.user) return
 
@@ -60,7 +64,7 @@ export default function Page() {
     if (session) refreshShiftStatus()
   }, [session])
 
-  const handleAuth = async () => {
+  const handleAuth = async (): Promise<void> => {
     setError(null)
     if (!email || !password) {
       setError('Email and password are required.')
@@ -74,7 +78,7 @@ export default function Page() {
     if (authError) setError(authError.message)
   }
 
-  const handleStartShift = async () => {
+  const handleStartShift = async (): Promise<void> => {
     setLoading(true)
     setError(null)
 
@@ -85,14 +89,16 @@ export default function Page() {
       return
     }
 
-    const now = new Date().toISOString()
+    const now: string = new Date().toISOString()
 
-    const { error } = await supabase.from('Shifts').insert([{
-      User_ID: user.user.id,
-      shift_start: now,
-      shift_active: true,
-      sent: false,
-    }])
+    const { error } = await supabase.from('Shifts').insert([
+      {
+        User_ID: user.user.id,
+        shift_start: now,
+        shift_active: true,
+        sent: false,
+      },
+    ])
 
     if (error) {
       console.error('Insert error:', error)
@@ -105,7 +111,7 @@ export default function Page() {
     setLoading(false)
   }
 
-  const handleEndShift = async () => {
+  const handleEndShift = async (): Promise<void> => {
     setLoading(true)
     setError(null)
 
@@ -152,14 +158,22 @@ export default function Page() {
       .from('shift-json')
       .list('', { search: filename })
 
-    let updatedJSON: any[] = []
+    const updatedJSON: ShiftLog[] = []
 
     if (fileExists?.length) {
       const { data: existingFile } = await supabase.storage
         .from('shift-json')
         .download(filename)
+
       const text = await existingFile?.text()
-      if (text) updatedJSON = JSON.parse(text)
+      if (text) {
+        try {
+          const existing: ShiftLog[] = JSON.parse(text)
+          updatedJSON.push(...existing)
+        } catch {
+          setError('Failed to parse existing JSON.')
+        }
+      }
     }
 
     updatedJSON.push({
@@ -178,7 +192,7 @@ export default function Page() {
     setLoading(false)
   }
 
-  const buttonClass =
+  const buttonClass: string =
     'w-full bg-blue-600 border-2 border-purple-600 text-white py-2 rounded hover:bg-blue-700 transition'
 
   if (!session) {
@@ -245,7 +259,6 @@ export default function Page() {
       {showCalendar && (
         <div className="mt-4 text-gray-700 text-sm">
           <p>Calendar view will go here.</p>
-          {/* This block is real and toggleable. You can place a future calendar component here. */}
         </div>
       )}
 
