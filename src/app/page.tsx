@@ -24,20 +24,17 @@ export default function Page() {
   const [isLogin, setIsLogin] = useState<boolean>(true)
 
   useEffect(() => {
-    const initSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setSession(session)
-      if (session) await refreshShiftStatus()
-    }
-
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         setSession(session)
-        if (session) await refreshShiftStatus()
+        await refreshShiftStatus()
       }
     )
 
-    initSession()
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+      refreshShiftStatus()
+    })
 
     return () => {
       authListener.subscription.unsubscribe()
@@ -75,10 +72,10 @@ export default function Page() {
   }
 
   const buttonClass =
-    'bg-blue-600 border-2 border-purple-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition'
+    'w-full max-w-xs bg-blue-600 border-2 border-purple-600 text-white py-2 rounded hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 transition'
 
   return (
-    <main className="flex flex-col items-center justify-center px-4 py-8 space-y-6">
+    <main className="flex flex-col items-center justify-center px-4 py-8 space-y-6 bg-white dark:bg-gray-900 text-black dark:text-white min-h-screen">
       <ShiftControls
         onShiftLogUpdate={setShiftLog}
         onShiftStatusRefresh={refreshShiftStatus}
@@ -88,7 +85,10 @@ export default function Page() {
 
       <ShiftStatus shiftLog={shiftLog} shiftActive={shiftActive} />
 
-      <button onClick={() => setShowCalendar(!showCalendar)} className={buttonClass}>
+      <button
+        onClick={() => setShowCalendar(!showCalendar)}
+        className={buttonClass}
+      >
         {showCalendar ? 'Hide Calendar' : 'Show Calendar'}
       </button>
 
@@ -99,7 +99,7 @@ export default function Page() {
       )}
 
       {error && (
-        <div className="text-red-600 text-sm mt-2">
+        <div className="text-red-600 dark:text-red-400 text-sm mt-2">
           {error}
         </div>
       )}
