@@ -95,7 +95,12 @@ export default function CalendarView() {
   const cells: React.ReactElement[] = []
 
   for (let i = 0; i < startDay; i++) {
-    cells.push(<div key={`empty-${i}`} className="border border-black h-24 bg-white"></div>)
+    cells.push(
+      <div
+        key={`empty-${i}`}
+        className="border h-24 bg-white dark:bg-gray-900 border-black dark:border-white"
+      ></div>
+    )
   }
 
   for (let day = 1; day <= totalDays; day++) {
@@ -105,21 +110,24 @@ export default function CalendarView() {
     cells.push(
       <div
         key={dateStr}
-        className="border border-black h-24 p-2 text-center flex flex-col justify-between bg-white"
+        className="border h-24 p-2 text-center flex flex-col justify-between 
+                   border-black dark:border-white bg-white dark:bg-gray-800 text-black dark:text-white"
       >
         <div className="font-bold text-lg">{day}</div>
-        <div className="text-blue-700 text-base font-semibold">{formatDuration(mins)}</div>
+        <div className="text-blue-700 dark:text-blue-300 text-base font-semibold">
+          {formatDuration(mins)}
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="w-full border-2 border-black p-4 rounded-lg bg-gray-50">
-      <div className="text-2xl font-bold mb-4 text-center">
+    <div className="w-full border-2 p-4 rounded-lg bg-gray-50 dark:bg-gray-900 border-black dark:border-white">
+      <div className="text-2xl font-bold mb-4 text-center text-black dark:text-white">
         {now.toLocaleString('default', { month: 'long', year: 'numeric' })}
       </div>
 
-      <div className="mb-6 text-center">
+      <div className="mb-6 text-center text-black dark:text-white">
         <p className="text-lg font-medium">
           Total Hours This Month: <span className="font-bold">{formatDuration(monthTotal)}</span>
         </p>
@@ -128,14 +136,14 @@ export default function CalendarView() {
         </p>
       </div>
 
-      <div className="grid grid-cols-7 border border-black">
-        <div className="border border-black p-2 font-bold text-center">Sun</div>
-        <div className="border border-black p-2 font-bold text-center">Mon</div>
-        <div className="border border-black p-2 font-bold text-center">Tue</div>
-        <div className="border border-black p-2 font-bold text-center">Wed</div>
-        <div className="border border-black p-2 font-bold text-center">Thu</div>
-        <div className="border border-black p-2 font-bold text-center">Fri</div>
-        <div className="border border-black p-2 font-bold text-center">Sat</div>
+      <div className="grid grid-cols-7 border border-black dark:border-white text-black dark:text-white text-sm sm:text-base">
+        <div className="border p-2 font-bold text-center border-black dark:border-white">Sun</div>
+        <div className="border p-2 font-bold text-center border-black dark:border-white">Mon</div>
+        <div className="border p-2 font-bold text-center border-black dark:border-white">Tue</div>
+        <div className="border p-2 font-bold text-center border-black dark:border-white">Wed</div>
+        <div className="border p-2 font-bold text-center border-black dark:border-white">Thu</div>
+        <div className="border p-2 font-bold text-center border-black dark:border-white">Fri</div>
+        <div className="border p-2 font-bold text-center border-black dark:border-white">Sat</div>
         {cells}
       </div>
     </div>
