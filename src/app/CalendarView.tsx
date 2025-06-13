@@ -2,16 +2,26 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
+import ShiftAssigner from './ShiftAssigner'
+import { useSessionContext } from './SessionProvider'
 
 interface Shift {
   shift_start: string
   shift_end: string | null
 }
 
+interface AssignedShift {
+  assigned_start: string
+  assigned_end: string
+}
+
 export default function CalendarView() {
+  const { session } = useSessionContext()
   const [hoursByDay, setHoursByDay] = useState<Record<string, number>>({})
+  const [plannedByDay, setPlannedByDay] = useState<Record<string, string>>({})
   const [monthTotal, setMonthTotal] = useState(0)
   const [payPeriodTotal, setPayPeriodTotal] = useState(0)
+  const [showAssigner, setShowAssigner] = useState(false)
 
   const formatDuration = (minutes: number) => {
     const h = Math.floor(minutes / 60)
@@ -21,13 +31,9 @@ export default function CalendarView() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const { data: userResult, error: userError } = await supabase.auth.getUser()
-      if (userError || !userResult?.user?.id) {
-        console.error('Authentication failed or user missing:', userError)
-        return
-      }
+      if (!session?.user?.id) return
 
-      const userId = userResult.user.id
+      const userId = session.user.id
 
       const now = new Date()
       const year = now.getFullYear()
@@ -49,19 +55,25 @@ export default function CalendarView() {
       const periodStart = new Date(reference.getTime() + payPeriodIndex * 14 * 86400000)
       const periodEnd = new Date(periodStart.getTime() + 13 * 86400000)
 
-      const { data: shifts, error } = await supabase
+      const { data: shifts, error: shiftsError } = await supabase
         .from('Shifts')
         .select('shift_start, shift_end')
         .eq('User_ID', userId)
         .gte('shift_start', monthStart)
         .lte('shift_start', monthEnd)
 
-      if (error) {
-        console.error('Failed to fetch shifts:', error)
-        return
-      }
+      const { data: assigned, error: assignedError } = await supabase
+        .from('AssignedShifts')
+        .select('assigned_start, assigned_end')
+        .eq('User_ID', userId)
+        .gte('assigned_start', monthStart)
+        .lte('assigned_start', monthEnd)
+
+      if (shiftsError) console.error('Failed to fetch shifts:', shiftsError)
+      if (assignedError) console.error('Failed to fetch assigned shifts:', assignedError)
 
       const map: Record<string, number> = {}
+      const planned: Record<string, string> = {}
       let monthMinutes = 0
       let payPeriodMinutes = 0
 
@@ -78,13 +90,21 @@ export default function CalendarView() {
         }
       }
 
+      for (const plan of assigned || []) {
+        const start = new Date(plan.assigned_start)
+        const end = new Date(plan.assigned_end)
+        const key = start.toISOString().split('T')[0]
+        planned[key] = `${start.toTimeString().slice(0, 5)}-${end.toTimeString().slice(0, 5)}`
+      }
+
       setHoursByDay(map)
+      setPlannedByDay(planned)
       setMonthTotal(monthMinutes)
       setPayPeriodTotal(payPeriodMinutes)
     }
 
     fetchData()
-  }, [])
+  }, [session, showAssigner])
 
   const now = new Date()
   const year = now.getFullYear()
@@ -107,15 +127,26 @@ export default function CalendarView() {
     const date = new Date(year, month, day)
     const dateStr = date.toISOString().split('T')[0]
     const mins = hoursByDay[dateStr] || 0
+    const plan = plannedByDay[dateStr]
+
     cells.push(
       <div
         key={dateStr}
-        className="border h-24 p-2 text-center flex flex-col justify-between 
+        className="border h-24 p-1 text-center flex flex-col justify-between 
                    border-black dark:border-white bg-white dark:bg-gray-800 text-black dark:text-white"
       >
-        <div className="font-bold text-lg">{day}</div>
-        <div className="text-blue-700 dark:text-blue-300 text-base font-semibold">
-          {formatDuration(mins)}
+        <div className="font-bold text-sm">{day}</div>
+        <div className="flex flex-col items-center justify-center gap-1 text-xs">
+          {mins > 0 && (
+            <div className="rounded-full bg-blue-200 text-blue-800 px-2 py-1 w-fit">
+              {formatDuration(mins)}
+            </div>
+          )}
+          {plan && (
+            <div className="rounded-full bg-green-200 text-green-800 px-2 py-1 w-fit">
+              {plan}
+            </div>
+          )}
         </div>
       </div>
     )
@@ -135,6 +166,17 @@ export default function CalendarView() {
           Total Hours This Pay Period: <span className="font-bold">{formatDuration(payPeriodTotal)}</span>
         </p>
       </div>
+
+      <div className="mb-4 text-center">
+        <button
+          className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition"
+          onClick={() => setShowAssigner(!showAssigner)}
+        >
+          {showAssigner ? 'Hide Shift Assigner' : 'Assign New Shift'}
+        </button>
+      </div>
+
+      {showAssigner && <ShiftAssigner onClose={() => setShowAssigner(false)} />}
 
       <div className="grid grid-cols-7 border border-black dark:border-white text-black dark:text-white text-sm sm:text-base">
         <div className="border p-2 font-bold text-center border-black dark:border-white">Sun</div>

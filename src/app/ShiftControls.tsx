@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
+import { useSessionContext } from './SessionProvider'
 
 type ShiftLog = {
   start: string
@@ -22,6 +23,7 @@ export default function ShiftControls({
   shiftActive,
   setError
 }: ShiftControlsProps) {
+  const { session } = useSessionContext()
   const [clock, setClock] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -41,15 +43,13 @@ export default function ShiftControls({
     setLoading(true)
     setError(null)
 
-    const { data: userResult, error: userError } = await supabase.auth.getUser()
-    if (userError || !userResult?.user?.id) {
-      console.error('Failed to get authenticated user:', userError)
+    if (!session?.user?.id) {
       setError('Authentication error.')
       setLoading(false)
       return
     }
 
-    const userId = userResult.user.id
+    const userId = session.user.id
     const now = new Date().toISOString()
 
     const { error: insertError } = await supabase.from('Shifts').insert([
@@ -77,15 +77,13 @@ export default function ShiftControls({
     setLoading(true)
     setError(null)
 
-    const { data: userResult, error: userError } = await supabase.auth.getUser()
-    if (userError || !userResult?.user?.id) {
-      console.error('Failed to get authenticated user:', userError)
+    if (!session?.user?.id) {
       setError('Authentication error.')
       setLoading(false)
       return
     }
 
-    const userId = userResult.user.id
+    const userId = session.user.id
 
     const { data: openShift, error: fetchError } = await supabase
       .from('Shifts')

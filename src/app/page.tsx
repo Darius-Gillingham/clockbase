@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Session } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabaseClient'
+import { useSessionContext } from './SessionProvider'
 
 import ShiftControls from './ShiftControls'
 import ShiftStatus from './ShiftStatus'
@@ -16,7 +16,7 @@ type ShiftLog = {
 }
 
 export default function Page() {
-  const [session, setSession] = useState<Session | null>(null)
+  const { session, setSession } = useSessionContext()
   const [error, setError] = useState<string | null>(null)
   const [shiftLog, setShiftLog] = useState<Partial<ShiftLog>>({})
   const [shiftActive, setShiftActive] = useState<boolean>(false)
@@ -24,31 +24,16 @@ export default function Page() {
   const [isLogin, setIsLogin] = useState<boolean>(true)
 
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSession(session)
-        await refreshShiftStatus()
-      }
-    )
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      refreshShiftStatus()
-    })
-
-    return () => {
-      authListener.subscription.unsubscribe()
-    }
-  }, [])
+    if (session) refreshShiftStatus()
+  }, [session])
 
   const refreshShiftStatus = async () => {
-    const { data: user } = await supabase.auth.getUser()
-    if (!user?.user?.id) return
+    if (!session?.user?.id) return
 
     const { data: openShift } = await supabase
       .from('Shifts')
       .select('*')
-      .eq('User_ID', user.user.id)
+      .eq('User_ID', session.user.id)
       .eq('shift_active', true)
       .order('shift_start', { ascending: false })
       .limit(1)
@@ -63,8 +48,8 @@ export default function Page() {
         isLogin={isLogin}
         setIsLogin={setIsLogin}
         setError={setError}
-        onAuthSuccess={(session) => {
-          setSession(session)
+        onAuthSuccess={(newSession) => {
+          setSession(newSession)
           refreshShiftStatus()
         }}
       />
