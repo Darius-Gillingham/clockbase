@@ -44,10 +44,19 @@ export default function AuthForm({
 
     if (error || !data.session) {
       setError(error?.message || 'Authentication failed.')
-    } else {
-      onAuthSuccess(data.session)
+      setLoading(false)
+      return
     }
 
+    // Force a refresh to persist session across tabs and reloads
+    const { data: refreshedSession, error: refreshError } = await supabase.auth.getSession()
+    if (refreshError || !refreshedSession.session) {
+      setError('Failed to initialize session after login.')
+      setLoading(false)
+      return
+    }
+
+    onAuthSuccess(refreshedSession.session)
     setLoading(false)
   }
 
