@@ -9,7 +9,7 @@ import { useSessionContext } from './SessionProvider'
 
 import ShiftControls from './panel/ShiftControls'
 import ShiftStatus from './panel/ShiftStatus'
-import AuthForm from '@/auth/AuthForm'
+import AuthForm from '@/app/auth/AuthForm'
 
 type ShiftLog = {
   start?: string
