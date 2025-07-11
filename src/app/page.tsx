@@ -1,15 +1,15 @@
 // File: src/app/page.tsx
-// Commit: restore clock-in panel as default view with auth logic preserved
+// Commit: fix panel imports using relative path to local app/panel directory
 
 'use client'
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import { useSessionContext } from '../context/SessionProvider'
+import { useSessionContext } from './SessionProvider'
 
-import ShiftControls from '../shifts/controls/ShiftControls'
-import ShiftStatus from '../shifts/status/ShiftStatus'
-import AuthForm from '../auth/login/AuthForm'
+import ShiftControls from './panel/ShiftControls'
+import ShiftStatus from './panel/ShiftStatus'
+import AuthForm from '@/auth/AuthForm'
 
 type ShiftLog = {
   start?: string

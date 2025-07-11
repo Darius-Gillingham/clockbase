@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import { useSessionContext } from './SessionProvider'
+import { useSessionContext } from '../SessionProvider'
 
 type ShiftLog = {
   start: string

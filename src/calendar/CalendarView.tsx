@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import ShiftAssigner from '../app/ShiftAssigner'
+import ShiftAssigner from '../shifts/ShiftAssigner'
 import { useSessionContext } from '../app/SessionProvider'
 
 interface Shift {
