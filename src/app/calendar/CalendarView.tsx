@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import ShiftAssigner from '@/shifts/ShiftAssigner'
 import { useSessionContext } from '../SessionProvider'
@@ -18,7 +18,6 @@ export default function CalendarView() {
   const [weekOffset, setWeekOffset] = useState(0)
   const [hoursByDay, setHoursByDay] = useState<Record<string, number>>({})
   const [showAssigner, setShowAssigner] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
 
   const formatDuration = (minutes: number) => {
     const h = Math.floor(minutes / 60)
@@ -77,52 +76,44 @@ export default function CalendarView() {
 
   const days = getWeekDays(weekOffset)
 
-  const handleScrollLeft = () => {
-    containerRef.current?.scrollBy({ left: -200, behavior: 'smooth' })
-  }
-
-  const handleScrollRight = () => {
-    containerRef.current?.scrollBy({ left: 200, behavior: 'smooth' })
-  }
-
   return (
-    <div className="w-screen h-screen bg-gray-50 dark:bg-gray-900 text-black dark:text-white overflow-hidden relative">
-      <div className="flex justify-between items-center p-4 border-b border-black dark:border-white">
-        <button onClick={() => setWeekOffset(weekOffset - 1)} className="px-4 py-2 bg-gray-200 dark:bg-gray-800 rounded">
+    <div className="w-screen h-screen flex flex-col overflow-hidden bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
+      <div className="flex justify-between items-center px-4 py-2 border-b border-black dark:border-white">
+        <button onClick={() => setWeekOffset(weekOffset - 1)} className="px-4 py-1 bg-gray-200 dark:bg-gray-800">
           ◀ Previous
         </button>
-        <h2 className="text-xl font-bold">
+        <h2 className="text-lg font-bold">
           Week of {days[0].toLocaleString('default', { month: 'short', day: 'numeric' })}
         </h2>
-        <button onClick={() => setWeekOffset(weekOffset + 1)} className="px-4 py-2 bg-gray-200 dark:bg-gray-800 rounded">
+        <button onClick={() => setWeekOffset(weekOffset + 1)} className="px-4 py-1 bg-gray-200 dark:bg-gray-800">
           Next ▶
         </button>
       </div>
 
-      <div className="relative h-[calc(100%-12rem)] overflow-x-auto" ref={containerRef}>
-        <div className="absolute left-0 top-0 bottom-0 w-8 z-20 hover:cursor-pointer" onMouseEnter={handleScrollLeft} />
-        <div className="absolute right-0 top-0 bottom-0 w-8 z-20 hover:cursor-pointer" onMouseEnter={handleScrollRight} />
-
-        <div className="flex w-max px-4 space-x-4 pt-4 pb-6">
+      <div className="flex-grow overflow-x-auto overflow-y-hidden">
+        <div className="flex h-full w-[1400px] min-w-full">
           {days.map((date) => {
             const key = toLocalDateKey(date)
             const mins = hoursByDay[key] || 0
             return (
-              <div key={key} className="w-64 min-w-[16rem] h-full p-4 border rounded-lg bg-white dark:bg-gray-800 shadow flex flex-col justify-start">
-                <div className="text-lg font-bold mb-2 text-center">
+              <div
+                key={key}
+                className="flex-1 flex flex-col border-r border-black dark:border-white px-2 py-4"
+              >
+                <div className="font-bold text-center text-sm mb-2">
                   {date.getDate()} {date.toLocaleString('default', { weekday: 'short' })}
                 </div>
-                <div className="flex-grow flex flex-col justify-center items-center">
+                <div className="flex-grow flex items-center justify-center">
                   {mins > 0 ? (
-                    <div className="rounded-full bg-blue-200 text-blue-800 px-3 py-1">
+                    <div className="bg-blue-200 text-blue-800 px-3 py-1 rounded-full text-sm">
                       {formatDuration(mins)}
                     </div>
                   ) : (
-                    <div className="text-sm text-gray-400">No shift</div>
+                    <div className="text-xs text-gray-500">No shift</div>
                   )}
                 </div>
-                <div className="mt-4 text-center">
-                  <button className="text-blue-600 underline">Edit</button>
+                <div className="text-center mt-4">
+                  <button className="text-blue-600 underline text-sm">Edit</button>
                 </div>
               </div>
             )
@@ -130,7 +121,7 @@ export default function CalendarView() {
         </div>
       </div>
 
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-center py-3 border-t border-black dark:border-white">
         <button
           className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
           onClick={() => setShowAssigner(!showAssigner)}
@@ -140,14 +131,10 @@ export default function CalendarView() {
       </div>
 
       {showAssigner && (
-        <div className="mt-4 px-4">
+        <div className="p-4 border-t border-black dark:border-white">
           <ShiftAssigner onClose={() => setShowAssigner(false)} />
         </div>
       )}
-
-      <div className="text-center text-sm italic text-gray-500 mt-4">
-        Optional month view could go here below
-      </div>
     </div>
   )
 }
