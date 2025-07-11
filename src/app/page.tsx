@@ -6,7 +6,6 @@ import { useSessionContext } from './SessionProvider'
 
 import ShiftControls from './ShiftControls'
 import ShiftStatus from './ShiftStatus'
-import CalendarView from './CalendarView'
 import AuthForm from './AuthForm'
 
 type ShiftLog = {
@@ -20,7 +19,6 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null)
   const [shiftLog, setShiftLog] = useState<Partial<ShiftLog>>({})
   const [shiftActive, setShiftActive] = useState<boolean>(false)
-  const [showCalendar, setShowCalendar] = useState<boolean>(false)
   const [isLogin, setIsLogin] = useState<boolean>(true)
 
   useEffect(() => {
@@ -56,9 +54,6 @@ export default function Page() {
     )
   }
 
-  const buttonClass =
-    'w-full max-w-xs bg-blue-600 border-2 border-purple-600 text-white py-2 rounded hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 transition'
-
   return (
     <main className="flex flex-col items-center justify-center px-4 py-8 space-y-6 bg-white dark:bg-gray-900 text-black dark:text-white min-h-screen">
       <ShiftControls
@@ -69,19 +64,6 @@ export default function Page() {
       />
 
       <ShiftStatus shiftLog={shiftLog} shiftActive={shiftActive} />
-
-      <button
-        onClick={() => setShowCalendar(!showCalendar)}
-        className={buttonClass}
-      >
-        {showCalendar ? 'Hide Calendar' : 'Show Calendar'}
-      </button>
-
-      {showCalendar && (
-        <div className="w-full max-w-4xl mt-6">
-          <CalendarView />
-        </div>
-      )}
 
       {error && (
         <div className="text-red-600 dark:text-red-400 text-sm mt-2">
