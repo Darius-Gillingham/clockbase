@@ -1,5 +1,5 @@
 // File: src/app/calendar/CalendarView.tsx
-// Commit: remove worked shifts view logic from CalendarView
+// Commit: add "Create Event" button and swap colors of Assign Shift and Set Availability
 
 'use client'
 
@@ -73,7 +73,7 @@ export default function CalendarView() {
             </h3>
             <div className="flex flex-col gap-3">
               <button
-                className="bg-green-600 text-white py-2 px-6 rounded hover:bg-green-700"
+                className="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700"
                 onClick={() => {
                   alert(`Set availability for ${modalDate.toDateString()}`)
                   setModalDate(null)
@@ -82,13 +82,22 @@ export default function CalendarView() {
                 Set Availability
               </button>
               <button
-                className="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700"
+                className="bg-green-600 text-white py-2 px-6 rounded hover:bg-green-700"
                 onClick={() => {
                   alert(`Assign shift on ${modalDate.toDateString()}`)
                   setModalDate(null)
                 }}
               >
                 Assign Shift
+              </button>
+              <button
+                className="bg-purple-600 text-white py-2 px-6 rounded hover:bg-purple-700"
+                onClick={() => {
+                  alert(`Create event on ${modalDate.toDateString()}`)
+                  setModalDate(null)
+                }}
+              >
+                Create Event
               </button>
               <button
                 className="text-red-600 underline mt-2 text-sm"
