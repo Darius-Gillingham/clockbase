@@ -1,5 +1,5 @@
 // File: src/app/Tab.tsx
-// Commit: rename "Clock In" to "Home" and center it in the tab layout
+// Commit: reorder tabs left to right as AI, Calendar, Home, Chat, Payroll
 
 'use client'
 
@@ -8,11 +8,11 @@ import Link from 'next/link'
 import { useSessionContext } from './SessionProvider'
 
 const tabs = [
+  { href: '/ai', label: 'AI' },
   { href: '/calendar', label: 'Calendar' },
-  { href: '/shifts', label: 'Shifts' },
   { href: '/', label: 'Home' },
-  { href: '/chat', label: 'Team Chat' },
-  { href: '/ai', label: 'AI Assistant' },
+  { href: '/chat', label: 'Chat' },
+  { href: '/payroll', label: 'Payroll' },
 ]
 
 export default function Tab() {
