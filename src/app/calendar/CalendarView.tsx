@@ -76,7 +76,7 @@ export default function CalendarView() {
   const days = getWeekDays(weekOffset)
 
   return (
-    <div className="w-screen h-screen flex flex-col overflow-hidden bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
+    <div className="w-screen h-screen flex flex-col overflow-hidden bg-gray-50 dark:bg-gray-900 text-black dark:text-white relative">
       <div className="flex justify-between items-center px-4 py-2 border-b border-black dark:border-white">
         <button onClick={() => setWeekOffset(weekOffset - 1)} className="px-4 py-1 bg-gray-200 dark:bg-gray-800">
           ◀ Previous
@@ -119,14 +119,14 @@ export default function CalendarView() {
       </div>
 
       {modalDate && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-900 border border-black dark:border-white rounded p-6 text-center text-black dark:text-white">
-            <h3 className="text-lg font-bold mb-4">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="bg-white dark:bg-gray-900 border border-black dark:border-white rounded-lg shadow-lg p-6 text-black dark:text-white z-10 pointer-events-auto">
+            <h3 className="text-lg font-bold mb-4 text-center">
               {modalDate.toDateString()}
             </h3>
             <div className="flex flex-col gap-3">
               <button
-                className="bg-green-600 text-white py-2 rounded hover:bg-green-700"
+                className="bg-green-600 text-white py-2 px-6 rounded hover:bg-green-700"
                 onClick={() => {
                   alert(`Set availability for ${modalDate.toDateString()}`)
                   setModalDate(null)
@@ -135,7 +135,7 @@ export default function CalendarView() {
                 Set Availability
               </button>
               <button
-                className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+                className="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700"
                 onClick={() => {
                   alert(`Assign shift on ${modalDate.toDateString()}`)
                   setModalDate(null)
@@ -144,7 +144,7 @@ export default function CalendarView() {
                 Assign Shift
               </button>
               <button
-                className="text-red-600 underline mt-2"
+                className="text-red-600 underline mt-2 text-sm"
                 onClick={() => setModalDate(null)}
               >
                 Cancel
