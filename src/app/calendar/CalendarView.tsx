@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import ShiftAssigner from '@/shifts/ShiftAssigner'
 import { useSessionContext } from '../SessionProvider'
 
 interface Shift {
@@ -17,7 +16,7 @@ export default function CalendarView() {
   const { session } = useSessionContext()
   const [weekOffset, setWeekOffset] = useState(0)
   const [hoursByDay, setHoursByDay] = useState<Record<string, number>>({})
-  const [showAssigner, setShowAssigner] = useState(false)
+  const [modalDate, setModalDate] = useState<Date | null>(null)
 
   const formatDuration = (minutes: number) => {
     const h = Math.floor(minutes / 60)
@@ -72,7 +71,7 @@ export default function CalendarView() {
     }
 
     fetchData()
-  }, [session, weekOffset, showAssigner])
+  }, [session, weekOffset])
 
   const days = getWeekDays(weekOffset)
 
@@ -98,7 +97,8 @@ export default function CalendarView() {
             return (
               <div
                 key={key}
-                className="flex-1 flex flex-col border-r border-black dark:border-white px-2 py-4"
+                onClick={() => setModalDate(date)}
+                className="flex-1 flex flex-col border-r border-black dark:border-white px-2 py-4 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
               >
                 <div className="font-bold text-center text-sm mb-2">
                   {date.getDate()} {date.toLocaleString('default', { weekday: 'short' })}
@@ -112,27 +112,45 @@ export default function CalendarView() {
                     <div className="text-xs text-gray-500">No shift</div>
                   )}
                 </div>
-                <div className="text-center mt-4">
-                  <button className="text-blue-600 underline text-sm">Edit</button>
-                </div>
               </div>
             )
           })}
         </div>
       </div>
 
-      <div className="flex justify-center py-3 border-t border-black dark:border-white">
-        <button
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
-          onClick={() => setShowAssigner(!showAssigner)}
-        >
-          {showAssigner ? 'Hide Shift Assigner' : 'Assign New Shift'}
-        </button>
-      </div>
-
-      {showAssigner && (
-        <div className="p-4 border-t border-black dark:border-white">
-          <ShiftAssigner onClose={() => setShowAssigner(false)} />
+      {modalDate && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-900 border border-black dark:border-white rounded p-6 text-center text-black dark:text-white">
+            <h3 className="text-lg font-bold mb-4">
+              {modalDate.toDateString()}
+            </h3>
+            <div className="flex flex-col gap-3">
+              <button
+                className="bg-green-600 text-white py-2 rounded hover:bg-green-700"
+                onClick={() => {
+                  alert(`Set availability for ${modalDate.toDateString()}`)
+                  setModalDate(null)
+                }}
+              >
+                Set Availability
+              </button>
+              <button
+                className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+                onClick={() => {
+                  alert(`Assign shift on ${modalDate.toDateString()}`)
+                  setModalDate(null)
+                }}
+              >
+                Assign Shift
+              </button>
+              <button
+                className="text-red-600 underline mt-2"
+                onClick={() => setModalDate(null)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
