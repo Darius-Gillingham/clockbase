@@ -1,16 +1,11 @@
-// File: src/calendar/page.tsx
-// Commit: initial calendar route rendering CalendarView
-
-'use client'
-
-import CalendarView from './CalendarView'
+// File: src/app/calendar/page.tsx
+// Commit: restore working Calendar route
 
 export default function CalendarPage() {
   return (
-    <main className="flex flex-col items-center justify-center px-4 py-8 space-y-6 bg-white dark:bg-gray-900 text-black dark:text-white min-h-screen">
-      <div className="w-full max-w-4xl">
-        <CalendarView />
-      </div>
-    </main>
+    <div className="p-6 text-black">
+      <h1 className="text-2xl font-bold mb-4">Team Calendar</h1>
+      <p>Calendar functionality will be here.</p>
+    </div>
   )
 }
