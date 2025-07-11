@@ -1,5 +1,5 @@
 // File: src/app/Tab.tsx
-// Commit: switch tab colors to GitHub-style green with darker background
+// Commit: rename "Clock In" to "Home" and center it in the tab layout
 
 'use client'
 
@@ -8,9 +8,9 @@ import Link from 'next/link'
 import { useSessionContext } from './SessionProvider'
 
 const tabs = [
-  { href: '/', label: 'Clock In' },
   { href: '/calendar', label: 'Calendar' },
   { href: '/shifts', label: 'Shifts' },
+  { href: '/', label: 'Home' },
   { href: '/chat', label: 'Team Chat' },
   { href: '/ai', label: 'AI Assistant' },
 ]
