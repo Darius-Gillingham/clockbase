@@ -7,7 +7,7 @@ import { useSessionContext } from './SessionProvider'
 
 import ShiftControls from './panel/ShiftControls'
 import ShiftStatus from './panel/ShiftStatus'
-import WeeklyHours from './payroll/WeeklyHours'
+import PayrollCalendar from './payroll/PayrollCalendar'
 import AuthForm from '@/app/auth/AuthForm'
 
 type ShiftLog = {
@@ -57,11 +57,11 @@ export default function HomePage() {
     )
   }
 
-  // 🔀 Route to WeeklyHours when on /payroll
+  // 🔀 Render payroll calendar if path is /payroll
   if (pathname === '/payroll') {
     return (
       <main className="flex flex-col items-center justify-center px-4 py-8 bg-white dark:bg-gray-900 text-black dark:text-white min-h-screen">
-        <WeeklyHours />
+        <PayrollCalendar />
       </main>
     )
   }

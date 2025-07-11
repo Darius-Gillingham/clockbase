@@ -34,7 +34,7 @@ const formatDuration = (minutes: number) => {
   return `${h}h ${m}m`
 }
 
-export default function WeeklyHours() {
+export default function PayrollCalendar() {
   const { session } = useSessionContext()
   const [weekOffset, setWeekOffset] = useState(0)
   const [hoursByDay, setHoursByDay] = useState<Record<string, number>>({})
@@ -75,15 +75,15 @@ export default function WeeklyHours() {
   const days = getWeekDays(weekOffset)
 
   return (
-    <div className="w-screen h-[180px] flex flex-col overflow-hidden bg-gray-100 dark:bg-gray-800 text-black dark:text-white relative">
+    <div className="w-screen h-screen flex flex-col overflow-hidden bg-gray-50 dark:bg-gray-900 text-black dark:text-white relative">
       <div className="flex justify-between items-center px-4 py-2 border-b border-black dark:border-white">
-        <button onClick={() => setWeekOffset(weekOffset - 1)} className="px-4 py-1 bg-gray-200 dark:bg-gray-700 rounded">
+        <button onClick={() => setWeekOffset(weekOffset - 1)} className="px-4 py-1 bg-gray-200 dark:bg-gray-800">
           ◀ Previous
         </button>
         <h2 className="text-lg font-bold">
-          Hours Worked – Week of {days[0].toLocaleString('default', { month: 'short', day: 'numeric' })}
+          Payroll – Week of {days[0].toLocaleString('default', { month: 'short', day: 'numeric' })}
         </h2>
-        <button onClick={() => setWeekOffset(weekOffset + 1)} className="px-4 py-1 bg-gray-200 dark:bg-gray-700 rounded">
+        <button onClick={() => setWeekOffset(weekOffset + 1)} className="px-4 py-1 bg-gray-200 dark:bg-gray-800">
           Next ▶
         </button>
       </div>
