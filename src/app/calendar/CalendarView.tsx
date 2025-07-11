@@ -1,6 +1,3 @@
-// File: src/app/calendar/CalendarView.tsx
-// Commit: add "Create Event" button and swap colors of Assign Shift and Set Availability
-
 'use client'
 
 import { useState } from 'react'
@@ -29,8 +26,37 @@ export default function CalendarView() {
   const { session } = useSessionContext()
   const [weekOffset, setWeekOffset] = useState(0)
   const [modalDate, setModalDate] = useState<Date | null>(null)
+  const [selectedAction, setSelectedAction] = useState<'availability' | 'shift' | 'event' | null>(null)
+  const [startTime, setStartTime] = useState('')
+  const [endTime, setEndTime] = useState('')
+  const [repeat, setRepeat] = useState(false)
 
   const days = getWeekDays(weekOffset)
+
+  const resetModal = () => {
+    setModalDate(null)
+    setSelectedAction(null)
+    setStartTime('')
+    setEndTime('')
+    setRepeat(false)
+  }
+
+  const handleAvailabilitySubmit = () => {
+    if (!startTime || !endTime || !modalDate) return
+
+    const dateStr = modalDate.toISOString().split('T')[0]
+    const start = new Date(`${dateStr}T${startTime}`)
+    const end = new Date(`${dateStr}T${endTime}`)
+
+    console.log({
+      type: 'availability',
+      start_time: start.toISOString(),
+      end_time: end.toISOString(),
+      repeat,
+    })
+
+    resetModal()
+  }
 
   return (
     <div className="w-screen h-screen flex flex-col overflow-hidden bg-gray-50 dark:bg-gray-900 text-black dark:text-white relative">
@@ -67,48 +93,90 @@ export default function CalendarView() {
 
       {modalDate && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="bg-white dark:bg-gray-900 border border-black dark:border-white rounded-lg shadow-lg p-6 text-black dark:text-white z-10 pointer-events-auto">
+          <div className="bg-white dark:bg-gray-900 border border-black dark:border-white rounded-lg shadow-lg p-6 text-black dark:text-white z-10 pointer-events-auto w-[320px]">
             <h3 className="text-lg font-bold mb-4 text-center">
               {modalDate.toDateString()}
             </h3>
-            <div className="flex flex-col gap-3">
-              <button
-                className="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700"
-                onClick={() => {
-                  alert(`Set availability for ${modalDate.toDateString()}`)
-                  setModalDate(null)
-                }}
-              >
-                Set Availability
-              </button>
-              <button
-                className="bg-green-600 text-white py-2 px-6 rounded hover:bg-green-700"
-                onClick={() => {
-                  alert(`Assign shift on ${modalDate.toDateString()}`)
-                  setModalDate(null)
-                }}
-              >
-                Assign Shift
-              </button>
-              <button
-                className="bg-purple-600 text-white py-2 px-6 rounded hover:bg-purple-700"
-                onClick={() => {
-                  alert(`Create event on ${modalDate.toDateString()}`)
-                  setModalDate(null)
-                }}
-              >
-                Create Event
-              </button>
-              <button
-                className="text-red-600 underline mt-2 text-sm"
-                onClick={() => setModalDate(null)}
-              >
-                Cancel
-              </button>
-            </div>
+
+            {selectedAction === 'availability' ? (
+              <div className="flex flex-col gap-3">
+                <label className="text-sm">
+                  Start Time:
+                  <input
+                    type="time"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    className="w-full mt-1 p-2 rounded bg-gray-100 dark:bg-gray-800 text-black dark:text-white"
+                  />
+                </label>
+                <label className="text-sm">
+                  End Time:
+                  <input
+                    type="time"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    className="w-full mt-1 p-2 rounded bg-gray-100 dark:bg-gray-800 text-black dark:text-white"
+                  />
+                </label>
+                <label className="text-sm flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={repeat}
+                    onChange={(e) => setRepeat(e.target.checked)}
+                  />
+                  Repeat weekly
+                </label>
+                <button
+                  className="bg-yellow-600 text-white py-2 px-6 rounded hover:bg-yellow-700"
+                  onClick={handleAvailabilitySubmit}
+                >
+                  Save Availability
+                </button>
+                <button
+                  className="text-red-600 underline text-sm"
+                  onClick={resetModal}
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                <button
+                  className="bg-yellow-600 text-white py-2 px-6 rounded hover:bg-yellow-700"
+                  onClick={() => setSelectedAction('availability')}
+                >
+                  Set Availability
+                </button>
+                <button
+                  className="bg-green-600 text-white py-2 px-6 rounded hover:bg-green-700"
+                  onClick={() => {
+                    alert(`Assign shift on ${modalDate.toDateString()}`)
+                    resetModal()
+                  }}
+                >
+                  Assign Shift
+                </button>
+                <button
+                  className="bg-purple-600 text-white py-2 px-6 rounded hover:bg-purple-700"
+                  onClick={() => {
+                    alert(`Create event on ${modalDate.toDateString()}`)
+                    resetModal()
+                  }}
+                >
+                  Create Event
+                </button>
+                <button
+                  className="text-red-600 underline mt-2 text-sm"
+                  onClick={resetModal}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
     </div>
   )
 }
+
