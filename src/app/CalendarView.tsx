@@ -15,6 +15,10 @@ interface AssignedShift {
   assigned_end: string
 }
 
+const toLocalDateKey = (date: Date): string => {
+  return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+}
+
 export default function CalendarView() {
   const { session } = useSessionContext()
   const [hoursByDay, setHoursByDay] = useState<Record<string, number>>({})
@@ -82,7 +86,7 @@ export default function CalendarView() {
         const start = new Date(shift.shift_start)
         const end = new Date(shift.shift_end)
         const mins = Math.floor((end.getTime() - start.getTime()) / 60000)
-        const key = start.toISOString().split('T')[0]
+        const key = toLocalDateKey(start)
         map[key] = (map[key] || 0) + mins
         monthMinutes += mins
         if (start >= periodStart && start <= periodEnd) {
@@ -93,7 +97,7 @@ export default function CalendarView() {
       for (const plan of assigned || []) {
         const start = new Date(plan.assigned_start)
         const end = new Date(plan.assigned_end)
-        const key = start.toISOString().split('T')[0]
+        const key = toLocalDateKey(start)
         planned[key] = `${start.toTimeString().slice(0, 5)}-${end.toTimeString().slice(0, 5)}`
       }
 
@@ -125,7 +129,7 @@ export default function CalendarView() {
 
   for (let day = 1; day <= totalDays; day++) {
     const date = new Date(year, month, day)
-    const dateStr = date.toISOString().split('T')[0]
+    const dateStr = toLocalDateKey(date)
     const mins = hoursByDay[dateStr] || 0
     const plan = plannedByDay[dateStr]
 
