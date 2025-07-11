@@ -1,14 +1,13 @@
-// File: src/app/page.tsx
-// Commit: fix panel imports using relative path to local app/panel directory
-
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import { useSessionContext } from './SessionProvider'
 
 import ShiftControls from './panel/ShiftControls'
 import ShiftStatus from './panel/ShiftStatus'
+import WeeklyHours from './payroll/WeeklyHours'
 import AuthForm from '@/app/auth/AuthForm'
 
 type ShiftLog = {
@@ -19,6 +18,7 @@ type ShiftLog = {
 
 export default function HomePage() {
   const { session, setSession } = useSessionContext()
+  const pathname = usePathname()
   const [error, setError] = useState<string | null>(null)
   const [shiftLog, setShiftLog] = useState<Partial<ShiftLog>>({})
   const [shiftActive, setShiftActive] = useState<boolean>(false)
@@ -54,6 +54,15 @@ export default function HomePage() {
           refreshShiftStatus()
         }}
       />
+    )
+  }
+
+  // 🔀 Route to WeeklyHours when on /payroll
+  if (pathname === '/payroll') {
+    return (
+      <main className="flex flex-col items-center justify-center px-4 py-8 bg-white dark:bg-gray-900 text-black dark:text-white min-h-screen">
+        <WeeklyHours />
+      </main>
     )
   }
 
