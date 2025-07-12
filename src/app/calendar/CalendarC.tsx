@@ -1,9 +1,9 @@
-// File: calendar/saveCalendarItem.ts
+// File: app/calendar/CalendarC.ts
 // Commit: helper to insert new calendar item into CalendarItems table
 
 import { supabase } from '@/lib/supabaseClient'
 
-export async function saveCalendarItem({
+export async function CalendarC({
   userId,
   type,
   start_time,
