@@ -1,4 +1,4 @@
-// File: lib/saveCalendarItem.ts
+// File: calendar/saveCalendarItem.ts
 // Commit: helper to insert new calendar item into CalendarItems table
 
 import { supabase } from '@/lib/supabaseClient'
