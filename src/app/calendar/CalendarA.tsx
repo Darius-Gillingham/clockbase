@@ -1,3 +1,6 @@
+// File: app/calendar/CalendarA.tsx
+// Commit: remove duplicate week navigation row
+
 'use client'
 
 import { useState } from 'react'
