@@ -1,5 +1,5 @@
 // File: app/calendar/page.tsx
-// Commit: centralize shared state and logic into page, mount all calendar components here
+// Commit: mount calendar components and centralize navigation and labeling logic
 
 'use client'
 
@@ -69,11 +69,34 @@ export default function CalendarPage() {
     }
   }
 
+  const getStartOfWeek = (ref: Date) => {
+    const copy = new Date(ref)
+    copy.setDate(ref.getDate() - ref.getDay())
+    return copy
+  }
+
+  const getWeekDays = (offset: number): Date[] => {
+    const base = getStartOfWeek(new Date())
+    base.setDate(base.getDate() + offset * 7)
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(base)
+      d.setDate(base.getDate() + i)
+      return d
+    })
+  }
+
+  const days = getWeekDays(weekOffset)
+  const label = days[0].toLocaleString('default', { month: 'short', day: 'numeric' })
+
   return (
     <>
-      <CalendarA
+      <CalendarD
         weekOffset={weekOffset}
         setWeekOffset={setWeekOffset}
+      />
+
+      <CalendarA
+        weekOffset={weekOffset}
         onDateClick={handleDateClick}
       />
 
@@ -84,12 +107,6 @@ export default function CalendarPage() {
           onSubmit={handleModalSubmit}
         />
       )}
-
-      <CalendarD
-        onPrev={() => setWeekOffset(weekOffset - 1)}
-        onNext={() => setWeekOffset(weekOffset + 1)}
-        label={`Week ${weekOffset + 1}`}
-      />
     </>
   )
 }
