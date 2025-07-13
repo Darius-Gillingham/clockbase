@@ -1,5 +1,5 @@
 // File: app/calendar/CalendarD.tsx
-// Commit: migrate week navigation logic from CalendarA, preserve correct "Week of Jul 6" format
+// Commit: display full month name in header label instead of short form
 
 'use client'
 
@@ -18,7 +18,7 @@ export default function CalendarD({ weekOffset, setWeekOffset }: CalendarDProps)
   const getWeekLabel = (offset: number): string => {
     const base = getStartOfWeek(new Date())
     base.setDate(base.getDate() + offset * 7)
-    return base.toLocaleString('default', { month: 'short', day: 'numeric' })
+    return base.toLocaleString('default', { month: 'long', day: 'numeric' }) // changed 'short' to 'long'
   }
 
   return (
