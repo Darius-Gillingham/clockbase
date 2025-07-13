@@ -1,5 +1,5 @@
 // File: app/calendar/page.tsx
-// Commit: mount calendar components and centralize navigation and labeling logic
+// Commit: enforce vertical stretch so CalendarA fills the remaining screen space
 
 'use client'
 
@@ -89,7 +89,7 @@ export default function CalendarPage() {
   const label = days[0].toLocaleString('default', { month: 'short', day: 'numeric' })
 
   return (
-    <>
+    <div className="flex flex-col h-[calc(100vh-60px)]">
       <CalendarD
         weekOffset={weekOffset}
         setWeekOffset={setWeekOffset}
@@ -107,6 +107,6 @@ export default function CalendarPage() {
           onSubmit={handleModalSubmit}
         />
       )}
-    </>
+    </div>
   )
 }
