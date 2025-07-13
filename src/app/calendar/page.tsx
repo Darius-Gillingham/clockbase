@@ -1,5 +1,5 @@
 // File: app/calendar/page.tsx
-// Commit: enforce vertical stretch so CalendarA fills the remaining screen space
+// Commit: add debug logging to confirm modal submission and Supabase insert execution
 
 'use client'
 
@@ -37,12 +37,15 @@ export default function CalendarPage() {
     endTime,
     repeats,
   }: {
-    type: 'availability' | 'scheduled_shift' | 'event'
+    type: 'availability'
     startTime: string
     endTime: string
     repeats: boolean
   }) => {
-    if (!modalDate || !session?.user?.id) return
+    if (!modalDate || !session?.user?.id) {
+      console.warn('[CalendarPage] Submission blocked: missing modalDate or session')
+      return
+    }
 
     const [startHour, startMinute] = startTime.split(':').map(Number)
     const [endHour, endMinute] = endTime.split(':').map(Number)
@@ -52,6 +55,15 @@ export default function CalendarPage() {
 
     const end = new Date(modalDate)
     end.setHours(endHour, endMinute, 0, 0)
+
+    console.log('[CalendarPage] Submitting calendar item:', {
+      userId: session.user.id,
+      type,
+      start_time: start.toISOString(),
+      end_time: end.toISOString(),
+      repeats,
+      repeat_interval: repeats ? 'weekly' : null,
+    })
 
     const error = await CalendarC({
       userId: session.user.id,
@@ -64,6 +76,7 @@ export default function CalendarPage() {
 
     if (error) {
       console.error('Error saving calendar item:', error)
+      alert('Failed to save availability.')
     } else {
       handleModalClose()
     }
