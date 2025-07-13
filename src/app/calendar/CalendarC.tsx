@@ -17,40 +17,40 @@ export async function CalendarC(payload: CalendarPayload) {
     type,
     start_time,
     end_time,
-    title,
-    notes,
+    title = null,
+    notes = null,
     repeats = false,
     repeat_interval = null,
   } = payload
 
   console.log('[CalendarC] Payload:', {
-    userId,
+    user_id: userId,
     type,
-    start_time,
-    end_time,
+    start_time: start_time.toISOString(),
+    end_time: end_time.toISOString(),
     title,
     notes,
     repeats,
     repeat_interval,
   })
 
-  const { data, error } = await supabase.from('CalendarItems').insert([
+  const { error, data } = await supabase.from('CalendarItems').insert([
     {
       user_id: userId,
       type,
-      start_time,
-      end_time,
-      title: title || null,
-      notes: notes || null,
+      start_time: start_time.toISOString(),
+      end_time: end_time.toISOString(),
+      title,
+      notes,
       repeats,
       repeat_interval,
     },
   ])
 
   if (error) {
-    console.error('[CalendarC] Supabase insert error (expanded):', JSON.stringify(error, null, 2))
+    console.error('[CalendarC] Supabase insert error (expanded):', error)
   } else {
-    console.log('[CalendarC] Insert successful:', data)
+    console.log('[CalendarC] Insert success:', data)
   }
 
   return error
