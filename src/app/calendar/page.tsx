@@ -1,6 +1,3 @@
-// File: app/calendar/page.tsx
-// Commit: add validation for end time after start time and prevent invalid insert attempts
-
 'use client'
 
 import { useState } from 'react'
@@ -61,23 +58,22 @@ export default function CalendarPage() {
       return
     }
 
-    console.log('[CalendarPage] Submitting calendar item:', {
-      userId: session.user.id,
-      type,
-      start_time: start.toISOString(),
-      end_time: end.toISOString(),
-      repeats,
-      repeat_interval: repeats ? 'weekly' : null,
-    })
-
-    const error = await CalendarC({
+    const payload = {
       userId: session.user.id,
       type,
       start_time: start,
       end_time: end,
       repeats,
-      repeat_interval: repeats ? 'weekly' : null,
+      repeat_interval: repeats ? 'weekly' as const : null,
+    }
+
+    console.log('[CalendarPage] Submitting calendar item:', {
+      ...payload,
+      start_time: payload.start_time.toISOString(),
+      end_time: payload.end_time.toISOString(),
     })
+
+    const error = await CalendarC(payload)
 
     if (error) {
       console.error('[CalendarPage] Save failed:', JSON.stringify(error, null, 2))
