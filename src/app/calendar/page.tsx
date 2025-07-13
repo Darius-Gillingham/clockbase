@@ -1,5 +1,5 @@
 // File: app/calendar/page.tsx
-// Commit: log structured error details if availability insert fails
+// Commit: add validation for end time after start time and prevent invalid insert attempts
 
 'use client'
 
@@ -55,6 +55,11 @@ export default function CalendarPage() {
 
     const end = new Date(modalDate)
     end.setHours(endHour, endMinute, 0, 0)
+
+    if (end <= start) {
+      alert('End time must be after start time.')
+      return
+    }
 
     console.log('[CalendarPage] Submitting calendar item:', {
       userId: session.user.id,

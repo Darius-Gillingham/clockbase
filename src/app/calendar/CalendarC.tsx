@@ -1,5 +1,5 @@
 // File: app/calendar/CalendarC.ts
-// Commit: log Supabase insert errors for debugging availability creation
+// Commit: add complete diagnostic logging to extract full Supabase insert error object
 
 import { supabase } from '@/lib/supabaseClient'
 
@@ -36,7 +36,16 @@ export async function CalendarC({
   ])
 
   if (error) {
-    console.error('[CalendarC] Supabase insert error:', error)
+    console.log('[CalendarC] Raw Supabase error:', error)
+    console.log('[CalendarC] Supabase error keys:', Object.keys(error))
+    console.log('[CalendarC] JSON:', JSON.stringify(error, null, 2))
+
+    console.error('[CalendarC] Supabase insert error (expanded):', {
+      code: (error as any).code,
+      message: (error as any).message,
+      details: (error as any).details,
+      hint: (error as any).hint,
+    })
   }
 
   return error
