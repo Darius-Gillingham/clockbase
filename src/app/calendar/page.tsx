@@ -64,14 +64,10 @@ export default function CalendarPage() {
       start_time: start,
       end_time: end,
       repeats,
-      repeat_interval: repeats ? 'weekly' as const : null,
+      repeat_interval: repeats ? 'weekly' as const : undefined,
     }
 
-    console.log('[CalendarPage] Submitting calendar item:', {
-      ...payload,
-      start_time: payload.start_time.toISOString(),
-      end_time: payload.end_time.toISOString(),
-    })
+    console.log('[CalendarPage] Submitting calendar item:', payload)
 
     const error = await CalendarC(payload)
 
