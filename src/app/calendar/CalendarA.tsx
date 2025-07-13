@@ -1,5 +1,5 @@
 // File: app/calendar/CalendarA.tsx
-// Commit: remove duplicate week navigation bar and move logic to CalendarD
+// Commit: make week day columns stretch full vertical height to fill the calendar space
 
 'use client'
 
@@ -34,19 +34,20 @@ export default function CalendarA({
     <div className="flex flex-col h-full w-full">
       <div className="flex-grow overflow-x-auto overflow-y-hidden">
         <div className="flex h-full w-[1400px] min-w-full">
-          {days.map((date) => {
-            return (
-              <div
-                key={date.toDateString()}
-                onClick={() => onDateClick(date)}
-                className="flex-1 flex flex-col border-r border-black dark:border-white px-2 py-4 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
-              >
+          {days.map((date) => (
+            <div
+              key={date.toDateString()}
+              onClick={() => onDateClick(date)}
+              className="flex-1 flex flex-col border-r border-black dark:border-white px-2 py-4 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
+            >
+              <div className="flex flex-col h-full justify-start">
                 <div className="font-bold text-center text-sm mb-2">
                   {date.getDate()} {date.toLocaleString('default', { weekday: 'short' })}
                 </div>
+                {/* Additional content like shifts/availability will go here */}
               </div>
-            )
-          })}
+            </div>
+          ))}
         </div>
       </div>
     </div>
