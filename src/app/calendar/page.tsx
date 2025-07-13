@@ -1,5 +1,5 @@
 // File: app/calendar/page.tsx
-// Commit: add debug logging to confirm modal submission and Supabase insert execution
+// Commit: log structured error details if availability insert fails
 
 'use client'
 
@@ -75,7 +75,7 @@ export default function CalendarPage() {
     })
 
     if (error) {
-      console.error('Error saving calendar item:', error)
+      console.error('[CalendarPage] Save failed:', JSON.stringify(error, null, 2))
       alert('Failed to save availability.')
     } else {
       handleModalClose()

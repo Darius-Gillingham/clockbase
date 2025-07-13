@@ -1,5 +1,5 @@
 // File: app/calendar/CalendarC.ts
-// Commit: helper to insert new calendar item into CalendarItems table
+// Commit: log Supabase insert errors for debugging availability creation
 
 import { supabase } from '@/lib/supabaseClient'
 
@@ -34,6 +34,10 @@ export async function CalendarC({
       repeat_interval: repeat_interval ?? null,
     },
   ])
+
+  if (error) {
+    console.error('[CalendarC] Supabase insert error:', error)
+  }
 
   return error
 }
