@@ -15,7 +15,6 @@ export default function CalendarPage() {
 
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
-  const [repeat, setRepeat] = useState(false)
 
   useEffect(() => {
     if (!session?.user?.id) return
@@ -24,13 +23,8 @@ export default function CalendarPage() {
 
     CalendarC({
       userId: session.user.id,
-      type: 'availability',
       start_time: now,
       end_time: inTenMin,
-      title: '[TEST] Init Check',
-      notes: '[TEST]',
-      repeats: false,
-      repeat_interval: null,
     }).then((error) => {
       if (error) {
         console.error('[CalendarPage] Initial test insert failed:', error)
@@ -48,19 +42,14 @@ export default function CalendarPage() {
     setModalDate(null)
     setStartTime('')
     setEndTime('')
-    setRepeat(false)
   }
 
   const handleModalSubmit = async ({
-    type,
     startTime,
     endTime,
-    repeats,
   }: {
-    type: 'availability'
     startTime: string
     endTime: string
-    repeats: boolean
   }) => {
     if (!modalDate || !session?.user?.id) {
       console.warn('[CalendarPage] Submission blocked: missing modalDate or session')
@@ -81,27 +70,25 @@ export default function CalendarPage() {
       return
     }
 
-    console.log('[CalendarPage] Submitting calendar item:', {
+    console.log('[CalendarPage] Submitting availability:', {
       userId: session.user.id,
-      type,
-      start_time: start.toISOString(),
-      end_time: end.toISOString(),
-      repeats,
-      repeat_interval: repeats ? 'weekly' : null,
+      assigned_start: start.toISOString(),
+      assigned_end: end.toISOString(),
     })
 
     const error = await CalendarC({
       userId: session.user.id,
-      type,
       start_time: start,
       end_time: end,
-      repeats,
-      repeat_interval: repeats ? 'weekly' : null,
     })
 
     if (error) {
-      console.error('[CalendarPage] Save failed:', JSON.stringify(error, null, 2))
-      alert('Failed to save availability.')
+      console.group('[CalendarPage] Save failed')
+      console.error('Code:', error.code)
+      console.error('Message:', error.message)
+      console.error('Details:', error.details)
+      console.groupEnd()
+      alert('Failed to save availability. Check console for details.')
     } else {
       handleModalClose()
     }
@@ -124,7 +111,6 @@ export default function CalendarPage() {
   }
 
   const days = getWeekDays(weekOffset)
-  const label = days[0].toLocaleString('default', { month: 'short', day: 'numeric' })
 
   return (
     <div className="flex flex-col h-[calc(100vh-60px)]">
