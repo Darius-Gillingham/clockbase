@@ -1,44 +1,62 @@
-// File: app/calendar/CalendarC.ts
-// Commit: fix insert error by explicitly handling null string field for repeat_interval
+import { createClient } from '@supabase/supabase-js'
 
-import { supabase } from '@/lib/supabaseClient'
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
-export async function CalendarC({
-  userId,
-  type,
-  start_time,
-  end_time,
-  title,
-  notes,
-  repeats,
-  repeat_interval,
-}: {
+type CalendarPayload = {
   userId: string
-  type: 'scheduled_shift' | 'availability' | 'event'
+  type: 'availability' | 'scheduled_shift' | 'event'
   start_time: Date
   end_time: Date
   title?: string
   notes?: string
   repeats?: boolean
   repeat_interval?: 'weekly' | null
-}) {
-  const { error } = await supabase.from('CalendarItems').insert([
+}
+
+export async function CalendarC(payload: CalendarPayload) {
+  const {
+    userId,
+    type,
+    start_time,
+    end_time,
+    title,
+    notes,
+    repeats = false,
+    repeat_interval = null,
+  } = payload
+
+  console.log('[CalendarC] Payload:', {
+    userId,
+    type,
+    start_time,
+    end_time,
+    title,
+    notes,
+    repeats,
+    repeat_interval,
+  })
+
+  const { data, error } = await supabase.from('CalendarItems').insert([
     {
       user_id: userId,
       type,
-      start_time: start_time.toISOString(),
-      end_time: end_time.toISOString(),
+      start_time,
+      end_time,
       title: title || null,
       notes: notes || null,
-      repeats: repeats ?? false,
-      repeat_interval: repeat_interval ?? null,
+      repeats,
+      repeat_interval,
     },
   ])
 
   if (error) {
-    console.error('[CalendarC] Supabase insert error (expanded):', error)
-    return error
+    console.error('[CalendarC] Supabase insert error (expanded):', JSON.stringify(error, null, 2))
+  } else {
+    console.log('[CalendarC] Insert successful:', data)
   }
 
-  return null
+  return error
 }
