@@ -1,5 +1,5 @@
 // File: app/calendar/CalendarB.tsx
-// Commit: set default modal type to scheduled_shift to streamline user flow
+// Commit: restrict modal to availability only, remove type selector and simplify UI
 
 'use client'
 
@@ -13,21 +13,20 @@ export default function CalendarB({
   modalDate: Date
   onClose: () => void
   onSubmit: (params: {
-    type: 'availability' | 'scheduled_shift' | 'event'
+    type: 'availability'
     startTime: string
     endTime: string
     repeats: boolean
   }) => void
 }) {
-  const [selectedType, setSelectedType] = useState<'availability' | 'scheduled_shift' | 'event'>('scheduled_shift')
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
   const [repeat, setRepeat] = useState(false)
 
   const handleSubmit = () => {
-    if (!startTime || !endTime || !selectedType) return
+    if (!startTime || !endTime) return
     onSubmit({
-      type: selectedType,
+      type: 'availability',
       startTime,
       endTime,
       repeats: repeat,
@@ -59,7 +58,11 @@ export default function CalendarB({
             />
           </label>
           <label className="text-sm flex items-center gap-2">
-            <input type="checkbox" checked={repeat} onChange={(e) => setRepeat(e.target.checked)} />
+            <input
+              type="checkbox"
+              checked={repeat}
+              onChange={(e) => setRepeat(e.target.checked)}
+            />
             Repeat weekly
           </label>
           <button
@@ -68,7 +71,10 @@ export default function CalendarB({
           >
             Save
           </button>
-          <button className="text-red-600 underline text-sm" onClick={onClose}>
+          <button
+            className="text-red-600 underline text-sm"
+            onClick={onClose}
+          >
             Cancel
           </button>
         </div>
