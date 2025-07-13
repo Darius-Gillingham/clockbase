@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSessionContext } from '../SessionProvider'
 import CalendarA from './CalendarA'
 import CalendarB from './CalendarB'
@@ -16,6 +16,29 @@ export default function CalendarPage() {
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
   const [repeat, setRepeat] = useState(false)
+
+  useEffect(() => {
+    if (!session?.user?.id) return
+    const now = new Date()
+    const inTenMin = new Date(now.getTime() + 10 * 60 * 1000)
+
+    CalendarC({
+      userId: session.user.id,
+      type: 'availability',
+      start_time: now,
+      end_time: inTenMin,
+      title: '[TEST] Init Check',
+      notes: '[TEST]',
+      repeats: false,
+      repeat_interval: null,
+    }).then((error) => {
+      if (error) {
+        console.error('[CalendarPage] Initial test insert failed:', error)
+      } else {
+        console.log('[CalendarPage] Initial test insert passed')
+      }
+    })
+  }, [session?.user?.id])
 
   const handleDateClick = (date: Date) => {
     setModalDate(date)
@@ -58,18 +81,23 @@ export default function CalendarPage() {
       return
     }
 
-    const payload = {
+    console.log('[CalendarPage] Submitting calendar item:', {
+      userId: session.user.id,
+      type,
+      start_time: start.toISOString(),
+      end_time: end.toISOString(),
+      repeats,
+      repeat_interval: repeats ? 'weekly' : null,
+    })
+
+    const error = await CalendarC({
       userId: session.user.id,
       type,
       start_time: start,
       end_time: end,
       repeats,
-      repeat_interval: repeats ? 'weekly' as const : undefined,
-    }
-
-    console.log('[CalendarPage] Submitting calendar item:', payload)
-
-    const error = await CalendarC(payload)
+      repeat_interval: repeats ? 'weekly' : null,
+    })
 
     if (error) {
       console.error('[CalendarPage] Save failed:', JSON.stringify(error, null, 2))
