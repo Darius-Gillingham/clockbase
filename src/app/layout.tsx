@@ -1,5 +1,5 @@
 // File: src/app/layout.tsx
-// Commit: import Tab from app directory and render sticky horizontal nav
+// Commit: add mobile-first responsive container and horizontal scroll protection
 
 import './globals.css'
 import { SessionProvider } from './SessionProvider'
@@ -21,10 +21,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-black text-black dark:text-white`}>
         <SessionProvider>
           <Tab />
-          <main className="pt-[4.5rem] px-4 pb-12">
+          <main className="pt-[4.5rem] pb-12 px-2 sm:px-4 md:px-6 lg:px-8 max-w-screen-xl mx-auto w-full overflow-x-hidden">
             {children}
           </main>
         </SessionProvider>
