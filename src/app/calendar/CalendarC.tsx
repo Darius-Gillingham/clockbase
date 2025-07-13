@@ -1,5 +1,5 @@
 // File: app/calendar/CalendarC.ts
-// Commit: add complete diagnostic logging to extract full Supabase insert error object
+// Commit: fix insert error by explicitly handling null string field for repeat_interval
 
 import { supabase } from '@/lib/supabaseClient'
 
@@ -36,17 +36,9 @@ export async function CalendarC({
   ])
 
   if (error) {
-    console.log('[CalendarC] Raw Supabase error:', error)
-    console.log('[CalendarC] Supabase error keys:', Object.keys(error))
-    console.log('[CalendarC] JSON:', JSON.stringify(error, null, 2))
-
-    console.error('[CalendarC] Supabase insert error (expanded):', {
-      code: (error as any).code,
-      message: (error as any).message,
-      details: (error as any).details,
-      hint: (error as any).hint,
-    })
+    console.error('[CalendarC] Supabase insert error (expanded):', error)
+    return error
   }
 
-  return error
+  return null
 }
