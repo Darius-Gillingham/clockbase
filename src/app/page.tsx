@@ -1,12 +1,10 @@
-// File: src/app/page.tsx
-// Commit: Move stateful profile drawer logic from layout to client-only homepage to resolve build error
-
 'use client'
 
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import { useSessionContext } from './SessionProvider'
+import { UserIcon } from 'lucide-react'
 
 import ShiftControls from './panel/ShiftControls'
 import ShiftStatus from './panel/ShiftStatus'
@@ -71,11 +69,7 @@ export default function HomePage() {
             onClick={() => setShowProfilePanel(true)}
             className="p-2 rounded-full border-2 border-white bg-white dark:bg-black hover:scale-105 transition-transform"
           >
-            <img
-              src="/assets/profile-icon.png"
-              alt="Profile"
-              className="w-8 h-8 rounded-full"
-            />
+            <UserIcon className="w-6 h-6 text-black dark:text-white" />
           </button>
         </div>
 
