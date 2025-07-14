@@ -1,3 +1,6 @@
+// File: src/app/chat/ChatInput.tsx
+// Commit: Input box and send button for sending new messages
+
 'use client'
 
 import { useState } from 'react'

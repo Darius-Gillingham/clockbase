@@ -1,3 +1,6 @@
+// File: src/app/chat/page.tsx
+// Commit: Top-level page for live in-memory chat (no persistence yet)
+
 'use client'
 
 import { useSessionContext } from '../SessionProvider'

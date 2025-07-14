@@ -1,6 +1,3 @@
-// File: src/app/layout.tsx
-// Commit: add mobile-first responsive container and horizontal scroll protection
-
 import './globals.css'
 import { SessionProvider } from './SessionProvider'
 import Tab from './Tab'
@@ -12,6 +9,9 @@ const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin']
 export const metadata = {
   title: 'Clockbase',
   description: 'AI-powered scheduling and shift tracking system',
+  icons: {
+    icon: '/favicon.png', // Path relative to /public
+  },
 }
 
 export default function RootLayout({
@@ -21,7 +21,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-black text-black dark:text-white`}>
+      <head />
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-black text-black dark:text-white`}
+      >
         <SessionProvider>
           <Tab />
           <main className="pt-[4.5rem] pb-12 px-2 sm:px-4 md:px-6 lg:px-8 max-w-screen-xl mx-auto w-full overflow-x-hidden">

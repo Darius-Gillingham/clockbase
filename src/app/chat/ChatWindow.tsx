@@ -1,3 +1,6 @@
+// File: src/app/chat/ChatWindow.tsx
+// Commit: Chat history display with scroll and visual message alignment
+
 'use client'
 
 import { useEffect, useRef } from 'react'
