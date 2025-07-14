@@ -1,5 +1,5 @@
 // File: app/calendar/PayrollCalendar.tsx
-// Commit: Restyle day boxes with tab-style green border, thick outline, and tab font style
+// Commit: Apply heavy serif font and unify navigation header styling with day boxes
 
 'use client'
 
@@ -78,15 +78,21 @@ export default function PayrollCalendar() {
   const days = getWeekDays(weekOffset)
 
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden bg-gray-50 text-black">
-      <div className="flex justify-between items-center px-4 py-2 border-b border-black">
-        <button onClick={() => setWeekOffset(weekOffset - 1)} className="px-4 py-1 bg-gray-200">
+    <div className="w-full h-full flex flex-col overflow-hidden bg-gray-50 text-black font-serif">
+      <div className="flex justify-between items-center px-4 py-2 mb-2 border-4 border-green-600 rounded-lg bg-white">
+        <button
+          onClick={() => setWeekOffset(weekOffset - 1)}
+          className="px-4 py-1 bg-gray-200 font-semibold rounded-md border border-black"
+        >
           ◀ Previous
         </button>
-        <h2 className="text-lg font-bold">
+        <h2 className="text-lg font-bold font-serif">
           Payroll – Week of {days[0].toLocaleString('default', { month: 'short', day: 'numeric' })}
         </h2>
-        <button onClick={() => setWeekOffset(weekOffset + 1)} className="px-4 py-1 bg-gray-200">
+        <button
+          onClick={() => setWeekOffset(weekOffset + 1)}
+          className="px-4 py-1 bg-gray-200 font-semibold rounded-md border border-black"
+        >
           Next ▶
         </button>
       </div>
@@ -98,9 +104,9 @@ export default function PayrollCalendar() {
           return (
             <div
               key={key}
-              className="flex flex-col flex-[1_0_0%] min-h-[220px] rounded-lg border-4 border-green-600 bg-white px-3 py-4"
+              className="flex flex-col flex-[1_0_0%] min-h-[220px] rounded-lg border-4 border-green-600 bg-white px-3 py-4 font-serif"
             >
-              <div className="text-center text-sm font-semibold mb-3 tracking-tight">
+              <div className="text-center text-sm font-semibold mb-3">
                 {date.getDate()} {date.toLocaleString('default', { weekday: 'short' })}
               </div>
               <div className="flex-grow flex items-center justify-center">
