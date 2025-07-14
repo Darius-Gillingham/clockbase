@@ -1,5 +1,5 @@
 // File: app/payroll/PayrollCalendar.tsx
-// Commit: Match CalendarA click mechanism by delegating day clicks via onDateClick prop
+// Commit: Add same darkening hover effect on day boxes as used in CalendarA
 
 'use client'
 
@@ -119,7 +119,7 @@ export default function PayrollCalendar({
             <div
               key={key}
               onClick={() => onDateClick?.(date)}
-              className="flex flex-col flex-[1_0_0%] min-h-[220px] rounded-lg border-4 border-green-600 bg-white px-3 py-4 font-serif cursor-pointer transition-shadow hover:shadow-md"
+              className="flex flex-col flex-[1_0_0%] min-h-[220px] rounded-lg border-4 border-green-600 bg-white px-3 py-4 font-serif cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
             >
               <div className="text-center text-sm font-semibold mb-3">
                 {date.getDate()} {date.toLocaleString('default', { weekday: 'short' })}
