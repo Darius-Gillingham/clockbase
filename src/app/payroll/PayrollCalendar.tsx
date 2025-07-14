@@ -1,5 +1,5 @@
-// File: app/calendar/PayrollCalendar.tsx
-// Commit: Apply heavy serif font and unify navigation header styling with day boxes
+// File: app/payroll/PayrollCalendar.tsx
+// Commit: Match CalendarA click mechanism by delegating day clicks via onDateClick prop
 
 'use client'
 
@@ -11,6 +11,8 @@ interface Shift {
   shift_start: string
   shift_end: string | null
 }
+
+export type CalendarDateClick = (date: Date) => void
 
 const toLocalDateKey = (date: Date): string =>
   `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
@@ -37,10 +39,15 @@ const formatDuration = (minutes: number) => {
   return `${h}h ${m}m`
 }
 
-export default function PayrollCalendar() {
+export default function PayrollCalendar({
+  onDateClick,
+}: {
+  onDateClick?: CalendarDateClick
+}) {
   const { session } = useSessionContext()
   const [weekOffset, setWeekOffset] = useState(0)
   const [hoursByDay, setHoursByDay] = useState<Record<string, number>>({})
+  const [shiftsByDay, setShiftsByDay] = useState<Record<string, Shift[]>>({})
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,16 +67,22 @@ export default function PayrollCalendar() {
         .lte('shift_start', end.toISOString())
 
       const map: Record<string, number> = {}
+      const shiftMap: Record<string, Shift[]> = {}
+
       for (const shift of shifts || []) {
         if (!shift.shift_end) continue
         const s = new Date(shift.shift_start)
         const e = new Date(shift.shift_end)
         const mins = Math.floor((e.getTime() - s.getTime()) / 60000)
         const key = toLocalDateKey(s)
+
         map[key] = (map[key] || 0) + mins
+        if (!shiftMap[key]) shiftMap[key] = []
+        shiftMap[key].push(shift)
       }
 
       setHoursByDay(map)
+      setShiftsByDay(shiftMap)
     }
 
     fetchData()
@@ -101,10 +114,12 @@ export default function PayrollCalendar() {
         {days.map((date) => {
           const key = toLocalDateKey(date)
           const mins = hoursByDay[key] || 0
+
           return (
             <div
               key={key}
-              className="flex flex-col flex-[1_0_0%] min-h-[220px] rounded-lg border-4 border-green-600 bg-white px-3 py-4 font-serif"
+              onClick={() => onDateClick?.(date)}
+              className="flex flex-col flex-[1_0_0%] min-h-[220px] rounded-lg border-4 border-green-600 bg-white px-3 py-4 font-serif cursor-pointer transition-shadow hover:shadow-md"
             >
               <div className="text-center text-sm font-semibold mb-3">
                 {date.getDate()} {date.toLocaleString('default', { weekday: 'short' })}
