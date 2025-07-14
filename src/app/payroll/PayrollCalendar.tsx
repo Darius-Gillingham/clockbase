@@ -1,3 +1,6 @@
+// File: app/calendar/PayrollCalendar.tsx
+// Commit: Fix vertical alignment and layout consistency for PC calendar view
+
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -88,7 +91,7 @@ export default function PayrollCalendar() {
         </button>
       </div>
 
-      <div className="flex-grow overflow-x-auto overflow-y-hidden">
+      <div className="flex-grow overflow-x-auto">
         <div className="flex h-full w-[1400px] min-w-full">
           {days.map((date) => {
             const key = toLocalDateKey(date)
@@ -96,9 +99,9 @@ export default function PayrollCalendar() {
             return (
               <div
                 key={key}
-                className="flex-1 flex flex-col border-r border-black dark:border-white px-2 py-4"
+                className="flex-1 flex flex-col border-r border-black dark:border-white px-2 py-4 justify-start"
               >
-                <div className="font-bold text-center text-sm mb-2">
+                <div className="font-bold text-center text-sm mb-4">
                   {date.getDate()} {date.toLocaleString('default', { weekday: 'short' })}
                 </div>
                 <div className="flex-grow flex items-center justify-center">
