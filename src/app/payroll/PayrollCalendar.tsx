@@ -1,5 +1,5 @@
 // File: app/calendar/PayrollCalendar.tsx
-// Commit: Restyle day boxes to match tab bar and increase height for better PC display
+// Commit: Restyle day boxes with tab-style green border, thick outline, and tab font style
 
 'use client'
 
@@ -78,15 +78,15 @@ export default function PayrollCalendar() {
   const days = getWeekDays(weekOffset)
 
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
-      <div className="flex justify-between items-center px-4 py-2 border-b border-black dark:border-white">
-        <button onClick={() => setWeekOffset(weekOffset - 1)} className="px-4 py-1 bg-gray-200 dark:bg-gray-800">
+    <div className="w-full h-full flex flex-col overflow-hidden bg-gray-50 text-black">
+      <div className="flex justify-between items-center px-4 py-2 border-b border-black">
+        <button onClick={() => setWeekOffset(weekOffset - 1)} className="px-4 py-1 bg-gray-200">
           ◀ Previous
         </button>
         <h2 className="text-lg font-bold">
           Payroll – Week of {days[0].toLocaleString('default', { month: 'short', day: 'numeric' })}
         </h2>
-        <button onClick={() => setWeekOffset(weekOffset + 1)} className="px-4 py-1 bg-gray-200 dark:bg-gray-800">
+        <button onClick={() => setWeekOffset(weekOffset + 1)} className="px-4 py-1 bg-gray-200">
           Next ▶
         </button>
       </div>
@@ -98,18 +98,18 @@ export default function PayrollCalendar() {
           return (
             <div
               key={key}
-              className="flex flex-col flex-[1_0_0%] min-h-[220px] rounded-md bg-slate-900 text-white border border-slate-700 px-2 py-3"
+              className="flex flex-col flex-[1_0_0%] min-h-[220px] rounded-lg border-4 border-green-600 bg-white px-3 py-4"
             >
-              <div className="font-semibold text-center text-sm mb-3">
+              <div className="text-center text-sm font-semibold mb-3 tracking-tight">
                 {date.getDate()} {date.toLocaleString('default', { weekday: 'short' })}
               </div>
               <div className="flex-grow flex items-center justify-center">
                 {mins > 0 ? (
-                  <div className="bg-blue-300 text-blue-900 px-3 py-1 rounded-full text-sm">
+                  <div className="bg-blue-200 text-blue-800 px-3 py-1 rounded-full text-sm">
                     {formatDuration(mins)}
                   </div>
                 ) : (
-                  <div className="text-xs text-gray-300">No shift</div>
+                  <div className="text-xs text-gray-500">No shift</div>
                 )}
               </div>
             </div>
