@@ -9,9 +9,6 @@ const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin']
 export const metadata = {
   title: 'Clockbase',
   description: 'AI-powered scheduling and shift tracking system',
-  icons: {
-    icon: '/favicon.png', // Path relative to /public
-  },
 }
 
 export default function RootLayout({
@@ -21,7 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head />
+      <head>
+        <link rel="icon" type="image/png" href="/favicon.png" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-black text-black dark:text-white`}
       >
