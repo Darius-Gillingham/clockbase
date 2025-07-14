@@ -1,5 +1,5 @@
 // File: app/calendar/PayrollCalendar.tsx
-// Commit: Fix vertical alignment and layout consistency for PC calendar view
+// Commit: Make calendar columns evenly spaced with dynamic responsive width and edge-safe margin
 
 'use client'
 
@@ -78,7 +78,7 @@ export default function PayrollCalendar() {
   const days = getWeekDays(weekOffset)
 
   return (
-    <div className="w-screen h-screen flex flex-col overflow-hidden bg-gray-50 dark:bg-gray-900 text-black dark:text-white relative">
+    <div className="w-full h-full flex flex-col overflow-hidden bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
       <div className="flex justify-between items-center px-4 py-2 border-b border-black dark:border-white">
         <button onClick={() => setWeekOffset(weekOffset - 1)} className="px-4 py-1 bg-gray-200 dark:bg-gray-800">
           ◀ Previous
@@ -91,32 +91,30 @@ export default function PayrollCalendar() {
         </button>
       </div>
 
-      <div className="flex-grow overflow-x-auto">
-        <div className="flex h-full w-[1400px] min-w-full">
-          {days.map((date) => {
-            const key = toLocalDateKey(date)
-            const mins = hoursByDay[key] || 0
-            return (
-              <div
-                key={key}
-                className="flex-1 flex flex-col border-r border-black dark:border-white px-2 py-4 justify-start"
-              >
-                <div className="font-bold text-center text-sm mb-4">
-                  {date.getDate()} {date.toLocaleString('default', { weekday: 'short' })}
-                </div>
-                <div className="flex-grow flex items-center justify-center">
-                  {mins > 0 ? (
-                    <div className="bg-blue-200 text-blue-800 px-3 py-1 rounded-full text-sm">
-                      {formatDuration(mins)}
-                    </div>
-                  ) : (
-                    <div className="text-xs text-gray-500">No shift</div>
-                  )}
-                </div>
+      <div className="flex-grow flex">
+        {days.map((date) => {
+          const key = toLocalDateKey(date)
+          const mins = hoursByDay[key] || 0
+          return (
+            <div
+              key={key}
+              className="flex flex-col flex-[1_0_0%] border-r border-black dark:border-white px-2 py-4"
+            >
+              <div className="font-bold text-center text-sm mb-4">
+                {date.getDate()} {date.toLocaleString('default', { weekday: 'short' })}
               </div>
-            )
-          })}
-        </div>
+              <div className="flex-grow flex items-center justify-center">
+                {mins > 0 ? (
+                  <div className="bg-blue-200 text-blue-800 px-3 py-1 rounded-full text-sm">
+                    {formatDuration(mins)}
+                  </div>
+                ) : (
+                  <div className="text-xs text-gray-500">No shift</div>
+                )}
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   )
