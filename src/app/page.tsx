@@ -63,7 +63,7 @@ export default function HomePage() {
     <div className="fixed bottom-4 right-4 z-[9999]">
       <button
         onClick={() => setShowProfilePanel(true)}
-        className="p-2 rounded-full border-2 border-white bg-white dark:bg-black hover:scale-105 transition-transform"
+        className="p-2 rounded-full border-[4px] border-green-600 bg-white dark:bg-black hover:scale-105 transition-transform"
       >
         <UserIcon className="w-6 h-6 text-black dark:text-white" />
       </button>
